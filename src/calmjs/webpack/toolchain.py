@@ -352,7 +352,7 @@ class WebpackToolchain(ES5Toolchain):
                 # assign the internal loader to the alias
                 alias[DEFAULT_CALMJS_EXPORT_NAME] = self.write_lookup_module(
                     spec, _DEFAULT_LOADER_FILENAME,
-                    *_WEBPACK_CALMJS_MODULE_LOADER_TEMPLATE,
+                    *_WEBPACK_CALMJS_MODULE_LOADER_TEMPLATE
                 )
                 # the bootstrap module will be the entry point in this
                 # case.
