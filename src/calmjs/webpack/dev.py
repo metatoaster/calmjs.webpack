@@ -30,6 +30,7 @@ from calmjs.parse.parsers.es5 import parse
 
 from calmjs.webpack.base import WEBPACK_CONFIG
 from calmjs.webpack.base import WEBPACK_SINGLE_TEST_BUNDLE
+from calmjs.webpack.base import DEFAULT_CALMJS_EXPORT_NAME
 from calmjs.webpack.interrogation import probe_calmjs_webpack_module_names
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,13 @@ def _generate_combined_test_module(spec):
 
     # TEST_MODULE_PATHS_MAP
     test_file = join(spec[BUILD_DIR], '__calmjs_tests__.js')
+    aliases = spec[WEBPACK_CONFIG]['resolve']['alias'] if spec.get(
+        WEBPACK_CONFIG) else {}
     with codecs.open(test_file, 'w', encoding='utf8') as fd:
+        # ensure that the calmjs bootstrap is loaded first, if it is
+        # defined so that the dynamic imports are made available.
+        if DEFAULT_CALMJS_EXPORT_NAME in aliases:
+            fd.write("require('%s');\n" % DEFAULT_CALMJS_EXPORT_NAME)
         fd.writelines(
             "require(%s);\n" % json.dumps(m)
             for m, path in spec[TEST_MODULE_PATHS_MAP].items() if (
